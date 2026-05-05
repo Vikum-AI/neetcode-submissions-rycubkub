@@ -1,0 +1,48 @@
+class Solution:
+    def findRedundantConnection(self, edges: List[List[int]]) -> List[int]:
+        u_edges = set()
+
+        for n1, n2 in edges:
+            u_edges.add(n1)
+            u_edges.add(n2)
+
+        n = len(u_edges)
+
+        par = [i for i in range(n)]
+        rank = [1] * n
+
+        # find the root parent of n1
+        def find(n1):
+            res = n1 - 1
+
+            while res != par[res]:
+                par[res] = par[par[res]]
+                res = par[res]
+
+            return res
+
+        # union n1 and n2
+        def union(n1, n2):
+            p1, p2 = find(n1), find(n2)
+            r1, r2 = rank[p1], rank[p2]
+
+            if p1 == p2:
+                return [n1, n2]
+
+            if r1 > r2:
+                par[p2] = p1
+                rank[p2] += rank[p1]
+            else:
+                par[p1] = p2
+                rank[p1] += rank[p2]
+
+            return []
+        
+        for n1, n2 in edges:
+            res = union(n1, n2)
+
+            if res:
+                return res
+
+        return []
+            
